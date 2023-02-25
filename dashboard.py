@@ -59,22 +59,7 @@ class App(customtkinter.CTk):
             )
             ''')
             connection.commit()
-            #To insert values
-            with open("attendance.csv") as file:
-                records = 0
-                for row in file:
-                    c.execute(
-                    ''' 
-                    INSERT INTO attendance VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
-                    ''' , row.split(",") )
-            connection.commit()
-            records += 1    
-            #To remove null value
-            c.execute(
-                ''' 
-                DELETE FROM attendance WHERE Emp_Code = '';
-                '''  ) 
-            connection.commit()             
+            
             #To create worksheet table
             c.execute('''
             CREATE TABLE IF NOT EXISTS worksheet
@@ -82,7 +67,7 @@ class App(customtkinter.CTk):
                                                                 [Department] VARCHAR(100),
                                                                 [Designation] VARCHAR(50),
                                                                 [DOJ] VARCHAR(15),
-                                                                [month] REAL,
+                                                                [daysinmonth] REAL,
                                                                 [Total_Payable_Days] REAL,
                                                                 [Bonus1] REAL,
                                                                 [Others_Pay1] REAL,
@@ -122,8 +107,7 @@ class App(customtkinter.CTk):
                                                                 [LWF] REAL,
                                                                 [EMPLOYER_ESI] REAL,
                                                                 [CTC] REAL,
-                                                                [In_amount] REAL,
-                                                                [In_amount2] REAL,
+                                                                [In_amount] REAL,                                                                
                                                                 [Management_Fee] REAL,
                                                                 [Billing] REAL,
                                                                 [status] VARCHAR,
@@ -131,6 +115,37 @@ class App(customtkinter.CTk):
                                                                 [Signature] VARCHAR)
             ''')
             connection.commit()
+            #To Create insert_trigger
+            c.execute(""" CREATE TRIGGER insert_trigger AFTER INSERT ON attendance
+                                BEGIN
+                                     INSERT INTO worksheet (SNo,EmployeeCode,Name,Department,Designation,DOJ,daysinmonth,Total_Payable_Days,Others_Pay1,OT_Hrs,Basic1,Special_Allowance1,CCA1,Company_CTC,N_S_Allowances,Remarks)
+                                     VALUES (NEW.SNo,NEW.Emp_Code,NEW.Name,NEW.Department,NEW.Designation,NEW.DOJ,NEW.Total_days,NEW.Days_payable,NEW.Other_Pay,NEW.Total_OT_Hours,NEW.Basic,NEW.Special_Allowance,NEW.CCA,NEW.Company_CTC,NEW.NS_Amount,NEW.Status);
+                                END;""" )
+            connection.commit()
+
+            #To insert values into attendance
+            with open("attendance.csv") as file:
+                records = 0
+                for row in file:
+                    c.execute(
+                    ''' 
+                    INSERT INTO attendance VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+                    ''' , row.split(",") )
+            connection.commit()
+            records += 1   
+
+            #To remove null value
+            c.execute(
+                ''' 
+                DELETE FROM attendance WHERE Emp_Code = '';
+                '''  ) 
+            connection.commit()
+            c.execute(
+                ''' 
+                DELETE FROM worksheet WHERE EmployeeCode = '';
+                '''  ) 
+            connection.commit()  
+
             connection.close()
 
         self.label = customtkinter.CTkLabel(master=self, text="Chethana \nHR \nSolutions", font=("Roboto", 50), text_color="#D1E8E2")
