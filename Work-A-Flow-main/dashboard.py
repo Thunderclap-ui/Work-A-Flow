@@ -13,7 +13,6 @@ from worksheet_updates import updates
 customtkinter.set_appearance_mode("system")
 customtkinter.set_default_color_theme("dark-blue")
 
-
 #class MyFrame(customtkinter.CTkFrame):
     #def __init__(self, master, **kwargs):
         #super().__init__(master, **kwargs)
@@ -34,7 +33,7 @@ class App(customtkinter.CTk):
         self.geometry(f"{window_width}x{window_height}+{center_x}+{center_y}")
 
         self.title("Work A Flow")
-        self.configure(fg_color="black")
+        self.configure(fg_color='#F5F5F5')
 
         def import_func(event=None):
             filename = filedialog.askopenfilename(initialdir="C:\\Users\\Desktop",
@@ -119,8 +118,8 @@ class App(customtkinter.CTk):
             #To Create insert_trigger
             c.execute(""" CREATE TRIGGER insert_trigger AFTER INSERT ON attendance
                                 BEGIN
-                                     INSERT INTO worksheet (SNo,EmployeeCode,Name,Department,Designation,DOJ,daysinmonth,Total_Payable_Days,Others_Pay1,OT_Hrs,Basic1,Special_Allowance1,CCA1,Company_CTC,N_S_Allowances,Remarks)
-                                     VALUES (NEW.SNo,NEW.Emp_Code,NEW.Name,NEW.Department,NEW.Designation,NEW.DOJ,NEW.Total_days,NEW.Days_payable,NEW.Other_Pay,NEW.Total_OT_Hours,NEW.Basic,NEW.Special_Allowance,NEW.CCA,NEW.Company_CTC,NEW.NS_Amount,NEW.Status);
+                                    INSERT INTO worksheet (SNo,EmployeeCode,Name,Department,Designation,DOJ,daysinmonth,Total_Payable_Days,Others_Pay1,OT_Hrs,Basic1,Special_Allowance1,CCA1,Company_CTC,N_S_Allowances,Remarks)
+                                    VALUES (NEW.SNo,NEW.Emp_Code,NEW.Name,NEW.Department,NEW.Designation,NEW.DOJ,NEW.Total_days,NEW.Days_payable,NEW.Other_Pay,NEW.Total_OT_Hours,NEW.Basic,NEW.Special_Allowance,NEW.CCA,NEW.Company_CTC,NEW.NS_Amount,NEW.Status);
                                 END;""" )
             connection.commit()
 
@@ -151,23 +150,42 @@ class App(customtkinter.CTk):
 
             connection.close()
 
-        self.label = customtkinter.CTkLabel(master=self, text="Chethana \nHR \nSolutions", font=("Roboto", 50), text_color="#D1E8E2")
+        self.label = customtkinter.CTkLabel(master=self, text="Chethana \nHR \nSolutions", font=("Telegaf Medium", 50), text_color="#333333")
         self.label.grid(row=0, column=1)
-        self.button = customtkinter.CTkButton(master=self, text="Import File", command=import_func,corner_radius=50, height=50, width=50, font=("Roboto", 30))
-        self.button.grid(row=2, column=1, padx=(300,300), pady=(300,0), sticky="nsew")
-        self.label2 = customtkinter.CTkLabel(master=self, text="Upload only .csv, .xlxs and relatable files only", font=("Roboto", 18))
-        self.label2.grid(row=3, column=1, padx=(20, 10), pady=(10, 10), sticky="ew")
+        self.button = customtkinter.CTkButton(master=self, text="Import File", command=import_func, corner_radius=30, height=80, width=80, font=("Roboto", 25), fg_color='#FFC872', text_color='#333333')
+        self.button.grid(row=2, column=1, sticky="n")
+        self.label2 = customtkinter.CTkLabel(master=self, text="Upload only .csv, .xlxs and relatable files only", font=("Roboto", 18), text_color='#333333')
+        self.label2.grid(row=2, column=1, padx=(20, 10), pady=(10, 10), sticky="ew")
 
         self.grid_rowconfigure((0, 1, 2), weight=1)
         self.grid_columnconfigure(1, weight=1)
         self.grid_columnconfigure((2, 3), weight=0)
 
-        self.sidebar_frame = customtkinter.CTkFrame(self, width=400, corner_radius=0, fg_color="#1F2833")
+        self.sidebar_frame = customtkinter.CTkFrame(self, width=400, corner_radius=0, fg_color="#0A1828")
         self.sidebar_frame.grid(row=0, column=0, rowspan=5, sticky="nsew")
-        self.sidebar_frame.grid_rowconfigure(4, weight=1)
-        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Welcome to Admin \nDashboard", font=("Roboto", 30), text_color="#116466")
-        self.logo_label.grid(row=0, column=0, padx=20, pady=40)
+        self.sidebar_frame.grid_rowconfigure(5, weight=0)
+        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Welcome to Admin \nDashboard", font=("Roboto", 30), text_color="#BFA181")
+        self.logo_label.grid(row=0, column=0, padx=20, pady=40, sticky='nsew')
 
+        self.pay_icon = customtkinter.CTkImage(dark_image=Image.open('./icons/PS1.png'))
+        self.button1 = customtkinter.CTkButton(self.sidebar_frame, corner_radius=30, image=self.pay_icon, text="Specific Pay Slip Generation", font=("Roboto", 25), fg_color='#178582', compound=customtkinter.LEFT, text_color='#DDDDDD')
+        self.button1.grid(row=1, column=0, padx=20, pady=40, sticky='nsew')
+
+        self.pay_icon2 = customtkinter.CTkImage(dark_image=Image.open('./icons/PS2.png'))
+        self.button2 = customtkinter.CTkButton(self.sidebar_frame, corner_radius=30, image=self.pay_icon2, text="General Pay Slip Generation", font=("Roboto", 25), fg_color='#178582', compound=customtkinter.LEFT, text_color='#DDDDDD')
+        self.button2.grid(row=2, column=0, padx=20, pady=40, sticky='nsew')
+
+        self.pay_icon3 = customtkinter.CTkImage(dark_image=Image.open('./icons/download.png'))
+        self.button3 = customtkinter.CTkButton(self.sidebar_frame, corner_radius=30, image=self.pay_icon3, text="Download Salary Worksheet", font=("Roboto", 25), fg_color='#178582', compound=customtkinter.LEFT, text_color='#DDDDDD')
+        self.button3.grid(row=3, column=0, padx=20, pady=40, sticky='nsew')
+
+        self.pay_icon4 = customtkinter.CTkImage(dark_image=Image.open('./icons/Invoice.png'))
+        self.button4 = customtkinter.CTkButton(self.sidebar_frame, corner_radius=30, image=self.pay_icon4, text="Company Invoice Generation", font=("Roboto", 25), fg_color='#178582', compound=customtkinter.LEFT, text_color='#DDDDDD')
+        self.button4.grid(row=4, column=0, padx=20, pady=40, sticky='nsew')
+
+        self.pay_icon5 = customtkinter.CTkImage(dark_image=Image.open('./icons/EPF.png'))
+        self.button5 = customtkinter.CTkButton(self.sidebar_frame, corner_radius=30, image=self.pay_icon5, text="Download EPF Sheet", font=("Roboto", 25), fg_color='#178582', text_color='#DDDDDD')
+        self.button5.grid(row=5, column=0, padx=20, pady=40)
         #self.my_frame = MyFrame(master=self)
         #self.my_frame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
 
