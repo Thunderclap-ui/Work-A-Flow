@@ -9,6 +9,8 @@ import sqlite3
 import pandas as pd
 import openpyxl
 from worksheet_updates import updates
+from CTkMessagebox import *
+from sideframe_functions import *
 
 customtkinter.set_appearance_mode("system")
 customtkinter.set_default_color_theme("dark-blue")
@@ -35,10 +37,24 @@ class App(customtkinter.CTk):
         self.title("Work A Flow")
         self.configure(fg_color='#F5F5F5')
 
+        self.resizable(False,False)
+
         def import_func(event=None):
             filename = filedialog.askopenfilename(initialdir="C:\\Users\\Desktop",
                                         title="Upload file...",
-                                        filetypes=(("Microsoft Excel Document",".xlsx"), ("CSV Document","*.csv"), ("All Files","*.*")))
+                                        filetypes=(("Microsoft Excel Document",".xlsx"), ("CSV Document","*.csv")))
+            if filename:
+                CTkMessagebox(title='Success', message='File Uploaded Successfully!!', icon='check')
+            else:
+                msg = CTkMessagebox(title='Error', message="File not yet uploaded", icon='cancel', option_1='Cancel',option_2='Upload')
+                if msg.get()=='Upload':
+                    filename = filedialog.askopenfilename(initialdir="C:\\Users\\Desktop",
+                                        title="Upload file...",
+                                        filetypes=(("Microsoft Excel Document",".xlsx"), ("CSV Document","*.csv")))
+                    if filename:
+                        CTkMessagebox(title='Success', message='File Uploaded Successfully!!', icon='check')
+                    else:
+                        CTkMessagebox(title='Error', message="File not yet uploaded", icon='cancel', option_1='Cancel', option_2='Upload')
             #To create dataframe
             df = pd.read_excel(filename, header=3)
             df.drop(df.iloc[:, 9:41], axis=1, inplace=True)
@@ -150,12 +166,17 @@ class App(customtkinter.CTk):
 
             connection.close()
 
-        self.label = customtkinter.CTkLabel(master=self, text="Chethana \nHR \nSolutions", font=("Telegaf Medium", 50), text_color="#333333")
+
+        self.label = customtkinter.CTkLabel(master=self, text="Chethana HR Solutions", font=("Telegaf Medium", 50), text_color="#333333")
         self.label.grid(row=0, column=1)
-        self.button = customtkinter.CTkButton(master=self, text="Import File", command=import_func, corner_radius=30, height=80, width=80, font=("Roboto", 25), fg_color='#FFC872', text_color='#333333')
+        self.button = customtkinter.CTkButton(master=self, text="Import File", command=import_func, corner_radius=30, height=80, width=80, font=("Roboto", 25), fg_color='#FFC872', text_color='#333333', hover_color='#0A1828', cursor='hand2')
         self.button.grid(row=2, column=1, sticky="n")
         self.label2 = customtkinter.CTkLabel(master=self, text="Upload only .csv, .xlxs and relatable files only", font=("Roboto", 18), text_color='#333333')
         self.label2.grid(row=2, column=1, padx=(20, 10), pady=(10, 10), sticky="ew")
+        #self.label3 = customtkinter.CTkLabel(master=self, text="Status: ", font=("Roboto", 18), text_color='#333333')
+        #self.label3.place(x=750,y=863)
+        #self.status_label = customtkinter.CTkLabel(master=self, text="No File Uploaded", font=("Roboto", 18, 'bold'), text_color='#F2F2F2', fg_color='red', corner_radius=30)
+        #self.status_label.grid(row=3, column=1, padx=20, pady=10)
 
         self.grid_rowconfigure((0, 1, 2), weight=1)
         self.grid_columnconfigure(1, weight=1)
@@ -163,32 +184,34 @@ class App(customtkinter.CTk):
 
         self.sidebar_frame = customtkinter.CTkFrame(self, width=400, corner_radius=0, fg_color="#0A1828")
         self.sidebar_frame.grid(row=0, column=0, rowspan=5, sticky="nsew")
-        self.sidebar_frame.grid_rowconfigure(5, weight=0)
-        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Welcome to Admin \nDashboard", font=("Roboto", 30), text_color="#BFA181")
+        self.sidebar_frame.grid_rowconfigure(8, weight=0)
+        self.logo_label = customtkinter.CTkLabel(self.sidebar_frame, text="Welcome to Admin Dashboard", font=("Roboto", 30), text_color="#BFA181")
         self.logo_label.grid(row=0, column=0, padx=20, pady=40, sticky='nsew')
 
         self.pay_icon = customtkinter.CTkImage(dark_image=Image.open('./icons/PS1.png'))
-        self.button1 = customtkinter.CTkButton(self.sidebar_frame, corner_radius=30, image=self.pay_icon, text="Specific Pay Slip Generation", font=("Roboto", 25), fg_color='#178582', compound=customtkinter.LEFT, text_color='#DDDDDD')
+        self.button1 = customtkinter.CTkButton(self.sidebar_frame, command=ssg_func, corner_radius=30, image=self.pay_icon, text="Specific Pay Slip Generation", font=("Roboto", 25), fg_color='#178582', compound=customtkinter.LEFT, text_color='#DDDDDD', hover_color='#BFA181', cursor='hand2')
         self.button1.grid(row=1, column=0, padx=20, pady=40, sticky='nsew')
 
         self.pay_icon2 = customtkinter.CTkImage(dark_image=Image.open('./icons/PS2.png'))
-        self.button2 = customtkinter.CTkButton(self.sidebar_frame, corner_radius=30, image=self.pay_icon2, text="General Pay Slip Generation", font=("Roboto", 25), fg_color='#178582', compound=customtkinter.LEFT, text_color='#DDDDDD')
+        self.button2 = customtkinter.CTkButton(self.sidebar_frame, corner_radius=30, image=self.pay_icon2, text="General Pay Slip Generation", font=("Roboto", 25), fg_color='#178582', compound=customtkinter.LEFT, text_color='#DDDDDD', hover_color='#BFA181', cursor='hand2')
         self.button2.grid(row=2, column=0, padx=20, pady=40, sticky='nsew')
 
         self.pay_icon3 = customtkinter.CTkImage(dark_image=Image.open('./icons/download.png'))
-        self.button3 = customtkinter.CTkButton(self.sidebar_frame, corner_radius=30, image=self.pay_icon3, text="Download Salary Worksheet", font=("Roboto", 25), fg_color='#178582', compound=customtkinter.LEFT, text_color='#DDDDDD')
+        self.button3 = customtkinter.CTkButton(self.sidebar_frame, corner_radius=30, image=self.pay_icon3, text="Download Salary Worksheet", font=("Roboto", 25), fg_color='#178582', compound=customtkinter.LEFT, text_color='#DDDDDD', hover_color='#BFA181', cursor='hand2')
         self.button3.grid(row=3, column=0, padx=20, pady=40, sticky='nsew')
 
         self.pay_icon4 = customtkinter.CTkImage(dark_image=Image.open('./icons/Invoice.png'))
-        self.button4 = customtkinter.CTkButton(self.sidebar_frame, corner_radius=30, image=self.pay_icon4, text="Company Invoice Generation", font=("Roboto", 25), fg_color='#178582', compound=customtkinter.LEFT, text_color='#DDDDDD')
+        self.button4 = customtkinter.CTkButton(self.sidebar_frame, corner_radius=30, image=self.pay_icon4, text="Company Invoice Generation", font=("Roboto", 25), fg_color='#178582', compound=customtkinter.LEFT, text_color='#DDDDDD', hover_color='#BFA181', cursor='hand2')
         self.button4.grid(row=4, column=0, padx=20, pady=40, sticky='nsew')
 
         self.pay_icon5 = customtkinter.CTkImage(dark_image=Image.open('./icons/EPF.png'))
-        self.button5 = customtkinter.CTkButton(self.sidebar_frame, corner_radius=30, image=self.pay_icon5, text="Download EPF Sheet", font=("Roboto", 25), fg_color='#178582', text_color='#DDDDDD')
+        self.button5 = customtkinter.CTkButton(self.sidebar_frame, corner_radius=30, image=self.pay_icon5, text="Download EPF Sheet", font=("Roboto", 25), fg_color='#178582',compound=customtkinter.LEFT, text_color='#DDDDDD', hover_color='#BFA181', cursor='hand2')
         self.button5.grid(row=5, column=0, padx=20, pady=40)
+        
+        self.frame_label = customtkinter.CTkLabel(self.sidebar_frame, text="@2023, Developed with Python🐍\t\tv3.10",font=("Roboto", 15), text_color="#F5F5F5")
+        self.frame_label.grid(row=7, column=0, padx=20, pady=160, sticky='nsew')
         #self.my_frame = MyFrame(master=self)
         #self.my_frame.grid(row=0, column=1, padx=20, pady=20, sticky="nsew")
-
 
 app = App()
 app.mainloop()
